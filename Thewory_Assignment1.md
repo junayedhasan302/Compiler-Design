@@ -1,4 +1,4 @@
-# CSE 323, Assignment 01 (short answers for handwriting)
+# CSE 323, Assignment 01
 
 ## Q1. Compiler vs Interpreter, Token/Lexeme/Pattern
 
