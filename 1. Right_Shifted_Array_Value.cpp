@@ -1,52 +1,43 @@
 // JUNAYED HASAN
 #include <bits/stdc++.h>
 using namespace std;
-int main(){
-    int n;
-    cout << "----1st LAB: Right Shift The Array Value And Sorting----\n";
-    cout << "Enter array size: "; cin >> n;
-    int arr[n];
-    // Array Input
-    cout << "Enter array elements: ";
-    for (int i = 0; i < n; i++){
-        cin >> arr[i];
+string isValidIdentifier(string s) {
+    string keywords[] = {
+        "auto", "break", "case", "char", "const", "continue",
+        "default", "do", "double", "else", "enum", "extern",
+        "float", "for", "goto", "if", "int", "long",
+        "register", "return", "short", "signed", "sizeof",
+        "static", "struct", "switch", "typedef", "union",
+        "unsigned", "void", "volatile", "while", "class",
+        "public", "private", "protected", "this", "new",
+        "delete", "try", "catch", "throw", "bool", "true",
+        "false", "using", "namespace", "virtual", "friend",
+        "inline", "operator", "template", "typename"
+    };
+    if (s.empty()) {return "Invalid Identifier";}
+    for (int i = 0; i < 56; i++) {
+        if (s == keywords[i]) {
+            return "Invalid Identifier";
+        }}
+    if (!((s[0] >= 'A' && s[0] <= 'Z') ||
+          (s[0] >= 'a' && s[0] <= 'z') ||
+          s[0] == '_')) {
+        return "Invalid Identifier";
     }
-    int position, value;
-    cout << "Enter Index: "; cin >> position;
-    // Error Handling
-    if (position < 0 || position > n){
-        cout << "Invalid Index! Try Again\n\n";
-        return main();
-    }
-    cout << "Enter value: "; cin >> value;
-    // Right shift
-    for (int i = n; i > position; i--){
-        arr[i] = arr[i - 1];
-    }
-
-    arr[position] = value; n++;
-    // Output right shifted array
-    cout << "Right shifted values: ";
-    for (int i = 0; i < n; i++){
-        cout << arr[i] << " ";
-    }
-    cout << endl;
-    // Bubble Sort
-    for (int i = 0; i < n - 1; i++){
-        for (int j = 0; j < n - i - 1; j++){
-            if (arr[j] > arr[j + 1]){
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-        }
-    }
-
-    // Output sorted array
-    cout << "Sorted values: ";
-    for (int i = 0; i < n; i++){
-        cout << arr[i] << " ";
-    }
-    cout << endl;
+    for (int i = 1; i < s.size(); i++) {
+        if (!((s[i] >= 'A' && s[i] <= 'Z') ||
+              (s[i] >= 'a' && s[i] <= 'z') ||
+              (s[i] >= '0' && s[i] <= '9') ||
+              s[i] == '_')) {
+            return "Invalid Identifier";}}
+    return "Valid Identifier";
+}
+int main() {
+    string s;
+    cout<<"\n---3rd LAB: Identifier_Checker---";
+    cout<<"\nEnter a identifier name: ";
+    getline(cin, s);
+    cout<<isValidIdentifier(s);
+    main();
     return 0;
 }
