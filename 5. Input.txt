@@ -1,0 +1,20 @@
+#include <iostream>
+using namespace std;
+
+// This is a single-line comment
+
+int main() {
+    cout << "Hello World"; // Print a message
+
+    /*
+       This is a multi-line comment.
+       It continues on another line.
+    */
+
+    cout << "C++ Programming";
+
+    /* Another multi-line comment */
+
+    // End of the program
+    return 0;
+}
