@@ -1,541 +1,550 @@
 
 # Lesson 01: Introduction to Compiler Design
 
-**Subject:** Compiler Design
-**Phase:** Compiler Design Fundamentals
-**Lesson:** 01
-**Level:** Beginner
+> **Course:** Compiler Design  
+> **Phase:** 01 — Fundamentals  
+> **Lesson:** 01  
+> **Level:** Beginner
 
 ---
 
-## Learning Objectives
+## Table of Contents
 
-After completing this lesson, students will be able to:
-
-- Define Programming Language and Compiler.
-- Explain why a Compiler is needed.
-- Differentiate between Source Code, Object Code, and Executable Code.
-- Describe the basic compilation process.
-- Distinguish between Compiler, Interpreter, and Assembler.
-- Define Compiler Design.
-- Identify the basic categories of programming errors.
+1. [Before We Begin](#1-before-we-begin)
+2. [Why Do We Need a Compiler?](#2-why-do-we-need-a-compiler)
+3. [What Is a Compiler?](#3-what-is-a-compiler)
+4. [How Does a Compiler Work?](#4-how-does-a-compiler-work)
+5. [A Simple Example](#5-a-simple-example)
+6. [What Is Compiler Design?](#6-what-is-compiler-design)
+7. [Basic Compiler Terminology](#7-basic-compiler-terminology)
+8. [Types of Programming Errors](#8-types-of-programming-errors)
+9. [Why Should a CSE Student Study Compiler Design?](#9-why-should-a-cse-student-study-compiler-design)
+10. [Common Misconceptions](#10-common-misconceptions)
+11. [Quick Revision](#11-quick-revision)
+12. [Practice Questions](#12-practice-questions)
+13. [Self-Assessment Checklist](#13-self-assessment-checklist)
 
 ---
 
-## 1. Introduction
+## 1. Before We Begin
 
-A computer program is a set of instructions that tells a computer
-what tasks to perform.
+Think about the last time you wrote a program in C.
 
-Programmers usually write programs using high-level programming
-languages such as C, C++, Java, and others.
+You might have written something as simple as:
 
-However, a processor executes instructions defined by its
-Instruction Set Architecture (ISA). High-level source code
-normally needs to be translated or processed before execution.
-
-A Compiler is one of the important tools used for this purpose.
-
-### Example
-
-```c
+```c id="c1a4n0"
 #include <stdio.h>
 
-int main(void) {
-    printf("Hello, World!");
+int main(void)
+{
+    printf("Hello, World!\n");
     return 0;
 }
 ```
 
-This is a C program that prints:
+You can read this code and understand what it is supposed to do. It asks the program to display a message.
 
-```text
-Hello, World!
-```
+But there is an interesting question:
 
-A typical C compiler toolchain translates the program into
-code suitable for the target platform.
+**How does the computer understand the instructions we write in C?**
+
+The CPU does not directly execute ordinary C statements such as `printf()` or `return 0;`. The program must be translated into a form that the target computer can execute.
+
+That is where a compiler becomes important.
+
+This lesson starts with that simple idea and gradually builds the foundation for the rest of Compiler Design.
 
 ---
 
-## 2. Programming Language
+## 2. Why Do We Need a Compiler?
 
-A Programming Language is a formal language used to express
-instructions, computations, and data-processing operations.
+### 2.1 Humans and Computers Work Differently
 
-### 2.1 High-Level Language
+Humans prefer languages that are easy to read and write. Computers execute machine instructions defined by their architecture.
 
-High-level languages provide abstractions that make programming
-easier for humans.
+Consider three broad levels of programming languages.
 
-Example:
+| Language Level | Example | Main Idea |
+|---|---|---|
+| High-level language | C, C++, Python | Designed to be easier for humans to understand and use |
+| Assembly language | `MOV`, `ADD`, `JMP` | Uses symbolic instructions associated with a processor architecture |
+| Machine language | Binary instruction encodings | Instructions represented in the form required by the processor |
 
-```c
-int a = 10;
-int b = 20;
-int sum = a + b;
+The exact instructions and binary encodings depend on the target architecture.
+
+### 2.2 A Simple Illustration
+
+```mermaid id="a1c0de"
+flowchart TD
+    A["Programmer<br/>Writes C Code"] --> B["Compiler or Language Toolchain"]
+    B --> C["Target Machine Instructions"]
+    C --> D["CPU Executes the Program"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style C fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style D fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
 
-### 2.2 Assembly Language
+This diagram shows the basic idea, not every build stage.
 
-Assembly Language represents processor instructions using
-human-readable mnemonics.
+In a real C toolchain, preprocessing, compilation, assembly, and linking may happen before the program is ready to run.
 
-Illustrative example:
+### 2.3 A Real-Life Analogy
 
-```asm
-ADD R1, R2, R3
-```
+Imagine you are speaking Bangla to someone who understands only Japanese.
 
-The exact instruction syntax depends on the processor architecture.
+You know exactly what you want to say, but the other person needs the message in a language they can understand.
 
-### 2.3 Machine Language
+A translator helps bridge that gap.
 
-Machine Language consists of instructions encoded according to
-a processor's Instruction Set Architecture.
+A compiler serves a similar purpose in programming: it translates a program from a source language into a target representation while checking whether the program follows the language's rules.
 
-Machine instructions are commonly represented using binary digits,
-but their bit patterns have specific meanings and encodings.
+The analogy is not perfect. A compiler does more than replace words: it analyzes program structure, checks meaning, and may optimize the generated code.
+
+### 2.4 Why Not Write Everything in Machine Code?
+
+Machine code is closely tied to the processor's instruction set. Writing large programs directly in machine code would be difficult to read, write, debug, and maintain.
+
+High-level languages make it easier to express complex ideas. Compilers help turn those ideas into instructions suitable for a target machine.
+
+**Key takeaway:** We write programs in languages that are convenient for humans, and compilers help translate them into forms suitable for computers.
 
 ---
 
 ## 3. What Is a Compiler?
 
-**Definition:**
+### Definition
 
-A Compiler is system software that translates a program written
-in a source language into an equivalent program in a target
-language, while detecting and reporting errors where applicable.
+A **Compiler** is system software that translates a program written in a source language into an equivalent program in a target language while checking the program according to the source language's rules.
 
-### Basic Translation Model
+For example, a C compiler translates C source code into a target representation suitable for the selected platform.
 
-```text
-Source Program
-      |
-      v
-   Compiler
-      |
-      v
-Target Program
+The target may be assembly code, object code, machine code, or another representation, depending on the compiler and its configuration.
+
+### Important Terms
+
+- **Source language:** The language in which the original program is written.
+- **Source program:** The original program supplied to the compiler.
+- **Target language:** The language or representation into which the program is translated.
+- **Target program:** The translated output produced by the translation process.
+
+### Basic Diagram
+
+```mermaid id="a1c0df"
+flowchart LR
+    A["Source Program<br/>Written in C"] --> B["Compiler"]
+    B --> C["Target Program<br/>Generated for a Target Platform"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style C fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
 
-The target may be machine code, assembly code, or an intermediate
-representation, depending on the compiler and its configuration.
+### What Does "Equivalent Program" Mean?
 
-### Why Is a Compiler Needed?
+The translated program should preserve the intended behavior of the source program for the relevant inputs, subject to the language's rules and implementation details.
 
-1. To translate source programs into target code.
-2. To detect and report many programming errors.
-3. To optimize code when appropriate.
-4. To generate code for a target architecture.
-5. To support the implementation of programming languages.
+For example, if a valid C program calculates the sum of two integers, the translated program should carry out the corresponding computation.
+
+The generated instructions may look completely different from the original source code, even though they implement the same intended behavior.
 
 ---
 
-## 4. Real-Life Analogy: A Translator
+## 4. How Does a Compiler Work?
 
-Imagine that a person writes instructions in Bengali, but the
-recipient understands only Japanese.
+A compiler does not simply read the entire source code and replace it with machine instructions in one mysterious step.
 
-A translator converts the instructions into a language that
-the recipient understands.
+It usually performs several kinds of analysis and translation.
 
-| Real-Life Concept | Compiler Design Concept |
+At a high level, the compiler must answer questions such as:
+
+1. What are the individual words and symbols in the program?
+2. Are those words arranged according to the language's grammar?
+3. Does the program make sense according to the language's rules?
+4. What lower-level representation can express the program's operations?
+5. Can the generated code be improved?
+6. What target instructions should be produced?
+
+These questions lead to the major phases of a compiler.
+
+### Overview of the Compiler Phases
+
+```mermaid id="a1c0d0"
+flowchart TD
+    A["Source Code"] --> B["Lexical Analysis"]
+    B --> C["Syntax Analysis"]
+    C --> D["Semantic Analysis"]
+    D --> E["Intermediate Code Generation"]
+    E --> F["Code Optimization"]
+    F --> G["Target Code Generation"]
+    G --> H["Target Code"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E
+    style C fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style D fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style E fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style F fill:#DCFCE7,stroke:#16A34A,color:#14532D
+    style G fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+```
+
+This is a simplified conceptual diagram. Real compilers may combine, repeat, or organize these activities differently.
+
+For now, do not worry about the technical details of each phase. We will study them one by one in later lessons.
+
+### A First Look at Each Phase
+
+| Phase | Beginner-Friendly Explanation |
 |---|---|
-| Original Bengali instructions | Source Code |
-| Translator | Compiler |
-| Translated instructions | Target Code |
-| Language rules | Syntax and Semantics |
+| Lexical Analysis | Breaks the source into tokens such as keywords, identifiers, and operators |
+| Syntax Analysis | Checks whether the tokens follow the language's grammar |
+| Semantic Analysis | Checks meaning-related rules, such as whether an operation is valid for its operands |
+| Intermediate Code Generation | Produces an intermediate representation of the program |
+| Code Optimization | Attempts to improve the code without changing its required behavior |
+| Target Code Generation | Produces code for the selected target architecture or representation |
 
-**Key Idea:** A Compiler translates a program from one language
-into another according to defined language rules.
-
-Note that a programming language compiler follows formal
-translation rules, unlike a human translator who may interpret
-natural language more flexibly.
+**Remember:** These are phases of compiler processing. The Preprocessor, Assembler, Linker, and Loader are related to the wider language-processing workflow, but they are not all compiler phases.
 
 ---
 
-## 5. Basic Compilation Process
+## 5. A Simple Example
 
-Consider this C statement:
+Let's use a small C expression.
 
-```c
+```c id="a1c0d1"
 int result = 10 + 20 * 3;
 ```
 
-A compiler commonly performs several kinds of analysis and
-transformation.
+Before thinking about machine instructions, we can reason about what the program means.
 
-### 5.1 Lexical Analysis
+### Step 1: Read the Tokens
 
-The source characters are grouped into tokens.
+The important tokens include:
 
-Example tokens:
+- `int` — a keyword
+- `result` — an identifier
+- `=` — an assignment operator
+- `10` and `20` — integer literals
+- `+` and `*` — arithmetic operators
+- `;` — a statement terminator in C
 
-```text
-int
-result
-=
-10
-+
-20
-*
-3
-;
-```
+Lexical Analysis identifies these tokens.
 
-### 5.2 Syntax Analysis
+### Step 2: Check the Structure
 
-The compiler checks whether the tokens follow the grammar
-of the programming language.
+The syntax of the declaration must follow C's grammar.
 
-Operator precedence is also important when constructing the
-expression's structure.
+For example, removing a required semicolon or placing an operator in an invalid position may produce a syntax error.
 
-### 5.3 Semantic Analysis
+### Step 3: Understand the Meaning
 
-The compiler checks semantic rules, including declarations,
-types, and other language-specific constraints.
+The expression is a valid integer arithmetic expression.
 
-### 5.4 Intermediate Code Generation
+The variable `result` is declared as an integer, and the expression's value can be assigned to it.
 
-The compiler may transform the program into an intermediate
-representation (IR).
-
-### 5.5 Code Optimization
-
-The compiler may apply transformations intended to improve
-execution time, code size, or other relevant properties.
-
-### 5.6 Target Code Generation
-
-The compiler generates code suitable for the target platform.
-
-### Simplified Pipeline
-
-```text
-Source Code
-    |
-    v
-Lexical Analysis
-    |
-    v
-Syntax Analysis
-    |
-    v
-Semantic Analysis
-    |
-    v
-Intermediate Code Generation
-    |
-    v
-Code Optimization
-    |
-    v
-Target Code Generation
-```
-
-Real compilers may organize, combine, or repeat some of these
-activities. Supporting data structures and error-handling
-mechanisms are also important.
-
----
-
-## 6. Operator Precedence Example
-
-Consider:
-
-```c
-int result = 10 + 20 * 3;
-```
+### Step 4: Apply Operator Precedence
 
 Multiplication has higher precedence than addition.
 
 Therefore:
 
-```text
-10 + 20 * 3
-= 10 + (20 * 3)
-= 10 + 60
-= 70
+```text id="a1c0d2"
+result = 10 + (20 * 3)
+       = 10 + 60
+       = 70
 ```
 
-The resulting value is:
+### Step 5: Translate the Program
 
-```text
-result = 70
+The compiler eventually generates target code that implements the declaration and calculation.
+
+We do not need to know the exact machine instructions yet. The important point is that the compiler must preserve the program's intended computation.
+
+### Example Summary
+
+```mermaid id="a1c0d3"
+flowchart TD
+    A["C Expression<br/>10 + 20 * 3"] --> B["Recognize Tokens"]
+    B --> C["Check Syntax"]
+    C --> D["Check Meaning"]
+    D --> E["Generate Target Code"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#E0F2FE,stroke:#0284C7,color:#0C4A6E
+    style C fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style D fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style E fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
-
-This example demonstrates why a compiler must correctly analyze
-the structure of expressions.
 
 ---
 
-## 7. Source Code, Object Code, and Executable Code
+## 6. What Is Compiler Design?
 
-### 7.1 Source Code
+**Compiler Design** is the study of how compilers are organized, how they analyze programs, how they translate source code, and how they generate correct and efficient target code.
 
-The original program written by a programmer.
+It connects ideas from several areas of Computer Science:
 
-Example:
+- Programming Languages
+- Data Structures and Algorithms
+- Formal Languages and Automata
+- Computer Architecture
+- Software Engineering
 
-```text
-main.c
-```
+### Why Is It Called "Design"?
 
-### 7.2 Object Code
+Building a compiler requires many decisions.
 
-Object code contains machine instructions and related information
-in an object-file format. Object files often contain relocatable
-code and unresolved external references.
+For example:
 
-Examples:
+- How should the compiler recognize identifiers and numbers?
+- How should it check the grammar of an expression?
+- How should it detect an invalid operation?
+- What intermediate representation should it use?
+- How can it generate efficient target instructions?
 
-```text
-main.o
-main.obj
-```
+Compiler Design studies these questions systematically.
 
-### 7.3 Executable Code
+### What Will You Learn?
 
-An executable is a program file prepared for execution under
-the target platform's rules.
+As you continue through the course, you will learn how to:
 
-Example on Windows:
+1. Recognize tokens in source code.
+2. Describe the grammar of a programming language.
+3. Build parsers for valid program structures.
+4. Check types and other semantic rules.
+5. Represent program operations in intermediate code.
+6. Apply code optimization techniques.
+7. Generate target code.
 
-```text
-app.exe
-```
-
-### Typical C Build Process
-
-```text
-main.c
-   |
-   v
-Preprocessing
-   |
-   v
-Compilation
-   |
-   v
-Assembly
-   |
-   v
-Object File
-   |
-   v
-Linking
-   |
-   v
-Executable
-   |
-   v
-Execution
-```
-
-The exact process depends on the toolchain. A compiler driver
-may coordinate several of these stages automatically.
+The goal is not merely to memorize definitions. It is to understand what happens behind the scenes when you write and compile a program.
 
 ---
 
-## 8. Compiler vs. Interpreter vs. Assembler
-
-### 8.1 Compiler
-
-A Compiler translates a source program into a target program.
-
-Example: GCC can compile C source code into object files or
-an executable through its toolchain.
-
-### 8.2 Interpreter
-
-An Interpreter executes a program by processing its instructions
-or an intermediate representation during execution.
-
-Example: CPython commonly compiles Python source into bytecode
-and executes that bytecode using its runtime interpreter.
-
-### 8.3 Assembler
-
-An Assembler translates assembly-language instructions into
-machine code or object code for a target architecture.
-
-### Comparison Table
-
-| Feature | Compiler | Interpreter | Assembler |
-|---|---|---|---|
-| Main purpose | Translate source programs | Execute programs | Translate assembly |
-| Input | Source language | Program or representation | Assembly language |
-| Output/Result | Target code | Program execution | Machine/object code |
-| Example | GCC | CPython runtime | NASM |
-
-**Important:** Modern language implementations may combine
-compilation and interpretation. The distinction is not simply
-that a compiler always processes the whole program while an
-interpreter always processes one line at a time.
-
----
-
-## 9. What Is Compiler Design?
-
-**Exam-Ready Definition:**
-
-Compiler Design is the study of the principles, algorithms, and
-techniques used to design and implement compilers that translate
-source programs into equivalent target programs while handling
-errors and, where appropriate, optimizing generated code.
-
-### Major Areas of Compiler Design
-
-1. Lexical Analysis
-2. Syntax Analysis
-3. Semantic Analysis
-4. Intermediate Code Generation
-5. Code Optimization
-6. Target Code Generation
-7. Symbol Table Management
-8. Error Detection and Recovery
-9. Runtime Environment
-
-### Why Study Compiler Design?
-
-- To understand how programming languages are implemented.
-- To understand the structure and processing of source programs.
-- To learn formal grammars and parsing algorithms.
-- To understand code generation and optimization.
-- To develop tools such as compilers, interpreters, and analyzers.
-
----
-
-## 10. Basic Categories of Errors
-
-### 10.1 Lexical Error
-
-An error caused by input that cannot be recognized as a valid
-token according to the language's lexical rules.
-
-### 10.2 Syntax Error
-
-An error caused by a token sequence that violates the grammar.
-
-Example:
-
-```c
-int x = ;
-```
-
-### 10.3 Semantic Error
-
-An error involving the meaning of a program or a violation
-of semantic rules, such as an invalid type operation.
-
-### 10.4 Runtime Error
-
-An error that occurs during program execution.
-
-Example: An operation attempts to divide by zero.
-
-Not every runtime error can be detected by a compiler before
-the program executes.
-
----
-
-## 11. Important Terms
+## 7. Basic Compiler Terminology
 
 | Term | Meaning |
 |---|---|
-| Programming Language | A language used to express computer programs |
-| Compiler | Software that translates source programs |
-| Source Code | Original program written by a programmer |
-| Target Code | Code produced by a translation process |
-| Machine Language | Instructions encoded for a processor ISA |
-| Assembly Language | Human-readable representation of machine instructions |
-| Object File | A file containing object code and related information |
-| Executable | A program file prepared for execution |
-| Interpreter | Software that processes and executes a program |
-| Assembler | Software that translates assembly instructions |
-| Compiler Design | The study of compiler construction principles and techniques |
+| Source Code | The original program written by the programmer |
+| Compiler | Software that translates source code into a target representation |
+| Target Code | The translated code produced for a target language or representation |
+| Token | A basic unit recognized during lexical analysis |
+| Syntax | The structural rules of a programming language |
+| Semantics | The meaning of a program or program construct |
+| Optimization | An attempt to improve generated code while preserving required behavior |
+| Machine Code | Instructions encoded for a particular processor architecture |
+| Object File | A file containing compiled or assembled code and supporting information |
+| Executable | A linked program that the operating system can prepare for execution |
+
+Some of these terms will become much clearer in later lessons.
 
 ---
 
-## 12. Quick Revision
+## 8. Types of Programming Errors
 
-- A Compiler translates a source program into a target program.
-- Processors execute instructions defined by their ISA.
-- High-level programs commonly require translation before execution.
-- Source code is the original program.
-- Object files commonly contain relocatable machine code and metadata.
-- Linking combines object files and required libraries or components.
-- Lexical Analysis identifies tokens.
-- Syntax Analysis checks grammatical structure.
-- Semantic Analysis checks language-specific semantic rules.
-- Optimization attempts to improve selected code properties.
-- Target Code Generation produces code for the target platform.
-- Compiler Design studies how compilers are designed and implemented.
+Understanding errors is important because a compiler does not catch every possible problem.
+
+### 8.1 Lexical Error
+
+A lexical error occurs when the source contains a sequence that cannot be recognized as a valid token according to the language's rules.
+
+The exact examples depend on the programming language and compiler.
+
+### 8.2 Syntax Error
+
+A syntax error occurs when the program's structure violates the language's grammar.
+
+Example:
+
+```c id="a1c0d4"
+int main(void)
+{
+    int number = 10
+    return 0;
+}
+```
+
+The declaration is missing a semicolon.
+
+### 8.3 Semantic Error
+
+A semantic error occurs when a program violates a language rule related to meaning or valid use.
+
+For example, C does not allow a structure member to be accessed through a variable of an unrelated scalar type.
+
+```c id="a1c0d5"
+int number = 10;
+/* number.name is invalid because number is not a structure */
+```
+
+Some semantic mistakes can be detected during compilation; other problems may remain undetected depending on the language and the situation.
+
+### 8.4 Runtime Error
+
+A runtime error occurs while a program is executing.
+
+Examples may include invalid memory access or an operation that fails at runtime.
+
+### 8.5 Logical Error
+
+A logical error occurs when the program runs but produces an incorrect result.
+
+Example:
+
+```c id="a1c0d6"
+int width = 5;
+int height = 4;
+
+int area = width + height; /* Incorrect formula for rectangle area */
+```
+
+The correct formula is multiplication, not addition.
+
+### Error Overview
+
+```mermaid id="a1c0d7"
+flowchart TD
+    A["Programming Mistake"] --> B["Lexical Error"]
+    A --> C["Syntax Error"]
+    A --> D["Semantic Error"]
+    A --> E["Runtime Error"]
+    A --> F["Logical Error"]
+
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style C fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style D fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style E fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style F fill:#DCFCE7,stroke:#16A34A,color:#14532D
+```
+
+This diagram groups common error categories. It does not mean every error is detected by a compiler.
 
 ---
 
-## 13. Practice Questions
+## 9. Why Should a CSE Student Study Compiler Design?
+
+You might wonder why Compiler Design is important when you already know how to write programs.
+
+The reason is simple: writing code and understanding how code is processed are related but different skills.
+
+Compiler Design helps you understand:
+
+- How programming languages are structured.
+- How a compiler recognizes keywords, identifiers, and operators.
+- How syntax and semantic rules are checked.
+- How source code is transformed into lower-level representations.
+- How optimization can improve generated code.
+- How programming languages relate to computer architecture.
+
+It also strengthens your understanding of formal languages, parsing, and language implementation.
+
+You do not need to become a compiler engineer to benefit from these concepts. Studying the subject can help you understand programming languages and the tools that developers use every day.
+
+---
+
+## 10. Common Misconceptions
+
+### Misconception 1: A Compiler Only Converts Code into Binary
+
+Not always. A compiler may generate assembly code, object code, intermediate representation, or another target format.
+
+### Misconception 2: A Compiler Can Detect Every Bug
+
+A compiler can detect many language-rule violations, but it cannot generally determine whether a program implements the programmer's intended solution.
+
+Logical errors can remain even when compilation succeeds.
+
+### Misconception 3: Compiler Design Is Only About Writing a Compiler
+
+Compiler Design also teaches language structure, parsing, formal methods, semantic rules, intermediate representations, and optimization.
+
+### Misconception 4: Compilation and Execution Are the Same
+
+Compilation translates the program. Execution runs the resulting program.
+
+A typical native-code toolchain may also perform assembly and linking between these stages.
+
+---
+
+## 11. Quick Revision
+
+- A compiler translates a source program into a target representation.
+- High-level languages are designed to be easier for humans to use.
+- Machine instructions depend on the target processor architecture.
+- A compiler performs multiple kinds of analysis and translation.
+- Compiler Design studies how these tasks are organized and implemented.
+- Lexical, syntax, semantic, runtime, and logical errors are different categories.
+- Successful compilation does not guarantee that a program produces the intended result.
+
+### One-Line Memory Aid
+
+**Recognize → Understand Structure → Check Meaning → Represent → Optimize → Generate**
+
+This is a simplified way to remember the major activities of a compiler.
+
+---
+
+## 12. Practice Questions
+
+Try answering these without looking at the notes.
 
 ### Short Questions
 
-1. What is a Compiler?
-2. Why is a Compiler needed?
-3. Define Compiler Design.
-4. What is Source Code?
-5. What is Machine Language?
-6. What is an Assembler?
-7. What is an Interpreter?
-8. What is the purpose of Code Optimization?
+1. What is a compiler?
+2. What are the source language and target language?
+3. Why do programmers use high-level languages?
+4. What is Compiler Design?
+5. Name any three major phases of a compiler.
 
-### Descriptive Questions
+### Conceptual Questions
 
-1. Explain the basic compilation process with a diagram.
-2. Differentiate between Compiler, Interpreter, and Assembler.
-3. Explain the difference between Source Code, Object Code,
-   and Executable Code.
-4. Describe the major activities performed by a compiler.
-5. Explain the role of Compiler Design in programming language
-   implementation.
+6. Why does a C program need to be translated before a CPU can execute its instructions?
+7. Does successful compilation guarantee that a program is logically correct? Explain.
+8. What is the difference between syntax and semantics?
+9. Why is Compiler Design relevant to a Computer Science student?
 
-### Problem-Solving Practice
+### Practice with Code
 
-For the following expression, determine the final value
-according to normal arithmetic precedence:
+10. What is the value of the following expression? Explain your answer.
 
-```c
-int result = 5 + 4 * 2;
+```c id="a1c0d8"
+int result = 10 + 20 * 3;
 ```
 
-Also identify the operators and operands.
+11. Identify the error in this code.
+
+```c id="a1c0d9"
+int main(void)
+{
+    int number = 10
+    return 0;
+}
+```
+
+12. Give one example each of a syntax error and a logical error.
 
 ---
 
-## 14. Self-Assessment Checklist
+## 13. Self-Assessment Checklist
 
-After studying this lesson, verify that you can:
+Before moving to the next lesson, make sure you can:
 
-- [ ] Define a Compiler in your own words.
-- [ ] Explain why source code requires translation.
-- [ ] Distinguish between high-level, assembly, and machine language.
-- [ ] Explain the basic compilation pipeline.
-- [ ] Differentiate Compiler, Interpreter, and Assembler.
-- [ ] Distinguish Source Code, Object Code, and Executable Code.
-- [ ] Explain the purpose of Compiler Design.
-- [ ] Solve a simple expression using operator precedence.
+- [ ] Explain why a compiler is needed.
+- [ ] Define a compiler in your own words.
+- [ ] Distinguish high-level language, assembly language, and machine language.
+- [ ] Describe the major activities of a compiler.
+- [ ] Explain the difference between syntax and semantics.
+- [ ] Distinguish compilation from execution.
+- [ ] Give examples of different programming errors.
 
 ---
 
 ## Conclusion
 
-Compiler Design explains how source programs are analyzed,
-translated, and transformed into target representations.
+A compiler helps bridge the gap between the language in which programmers express their ideas and the target instructions a computer can execute.
 
-This lesson introduced the fundamental concepts required to
-understand the internal structure of a compiler.
+Compiler Design takes us behind the scenes. It explains how a program is recognized, checked, represented, optimized, and translated.
 
-In the next lesson, we will study Compiler, Interpreter,
-and Assembler in greater detail, including their execution
-models, advantages, limitations, and examples.
+Once you understand this foundation, the later topics—such as Lexical Analysis, Context-Free Grammars, Parsing, Semantic Analysis, and Code Generation—will fit together more naturally.
+
+**Next Lesson:** Lesson 02 — Compiler vs. Interpreter vs. Assembler
