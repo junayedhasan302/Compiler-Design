@@ -1,432 +1,561 @@
 
 # Lesson 02: Compiler vs. Interpreter vs. Assembler
 
-**Subject:** Compiler Design
-**Phase:** Compiler Design Fundamentals
-**Lesson:** 02
-**Level:** Beginner
+> **Course:** Compiler Design  
+> **Phase:** 01 — Fundamentals  
+> **Lesson:** 02  
+> **Level:** Beginner
 
 ---
 
-## Learning Objectives
+## Table of Contents
 
-After completing this lesson, students will be able to:
-
-- Define Compiler, Interpreter, and Assembler.
-- Explain their purposes and basic working processes.
-- Differentiate between the three tools.
-- Understand the role of compilation and interpretation in modern language implementations.
-- Explain the relationship between Compiler, Assembler, Object File, Linker, and Executable.
-- Identify common misconceptions about these tools.
-
----
-
-## 1. Introduction
-
-Programming languages use different tools to translate or
-execute programs.
-
-Three important terms in Compiler Design are:
-
-1. Compiler
-2. Interpreter
-3. Assembler
-
-Although these tools have different responsibilities, they
-may work together in a software development toolchain.
+1. [Start with the Big Picture](#1-start-with-the-big-picture)
+2. [What Is a Compiler?](#2-what-is-a-compiler)
+3. [What Is an Interpreter?](#3-what-is-an-interpreter)
+4. [What Is an Assembler?](#4-what-is-an-assembler)
+5. [Compare the Three Tools](#5-compare-the-three-tools)
+6. [A Real-Life Analogy](#6-a-real-life-analogy)
+7. [How a C Program Is Built](#7-how-a-c-program-is-built)
+8. [Does an Interpreter Always Run Source Code Directly?](#8-does-an-interpreter-always-run-source-code-directly)
+9. [Common Misconceptions](#9-common-misconceptions)
+10. [Quick Revision](#10-quick-revision)
+11. [Practice Questions](#11-practice-questions)
+12. [Self-Assessment Checklist](#12-self-assessment-checklist)
 
 ---
 
-## 2. Compiler
+## 1. Start with the Big Picture
+
+In the previous lesson, we learned that a compiler translates a program from a source language into a target representation.
+
+But a compiler is not the only tool involved in programming-language translation and execution.
+
+Three important terms often appear together:
+
+- Compiler
+- Interpreter
+- Assembler
+
+They are related, but they do not do the same job.
+
+The easiest way to understand them is to begin with their inputs.
+
+| Tool | Main Input |
+|---|---|
+| Compiler | Source code in a supported programming language |
+| Interpreter | Source code or another supported representation that it processes and executes |
+| Assembler | Assembly-language instructions |
+
+The most important question is:
+
+**What does each tool receive, and what does it do with that input?**
+
+Keep that question in mind throughout this lesson.
+
+---
+
+## 2. What Is a Compiler?
 
 ### Definition
 
-A compiler is system software that translates a program written
-in a source language into a target language.
+A **Compiler** is software that translates a program written in a source language into a target representation.
+
+The target representation may be assembly code, object code, machine code, or an intermediate representation, depending on the compiler and its configuration.
 
 ### Example
 
-Consider a C program:
+Consider this C program:
 
-```c
+```c id="b2c0a1"
 #include <stdio.h>
 
-int main(void) {
-    int a = 10;
-    int b = 20;
-
-    printf("%d\n", a + b);
+int main(void)
+{
+    printf("Hello, World!\n");
     return 0;
 }
 ```
 
-Expected output:
+The programmer writes the program in C.
 
-```text
-30
+A C compiler analyzes the source code and translates it into a target representation. In a typical native-code toolchain, the build process also involves assembling and linking before an executable is ready.
+
+### Basic Compiler Workflow
+
+```mermaid id="b2c0a2"
+flowchart TD
+    A["C Source Code<br/>main.c"] --> B["Compiler"]
+    B --> C["Target Code<br/>Assembly or Object Code"]
+    C --> D["Further Build Steps<br/>If Required"]
+    D --> E["Executable Program"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style C fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style E fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
 
-A C compiler toolchain can translate this source program into
-object code and, through linking, an executable program.
+This is a simplified workflow. The exact output and the number of separate steps depend on the toolchain.
 
-### Basic Process
+### What Does a Compiler Do?
 
-```text
-C Source Code
-      |
-      v
-   Compiler
-      |
-      v
- Target Code
-```
+A compiler may perform activities such as:
 
-The target code may be machine code, assembly code, or an
-intermediate representation, depending on the compiler.
+1. Recognizing tokens.
+2. Checking syntax.
+3. Checking semantic rules.
+4. Generating an intermediate representation.
+5. Optimizing the program.
+6. Generating target code.
 
-### Advantages
+We will study these activities in detail in later lessons.
 
-- Translates source programs into target code.
-- Detects many syntax and semantic errors.
-- Can perform code optimization.
-- Can generate code for a target architecture.
+### When Is a Compiler Used?
 
-### Limitations
+Compilers are commonly used with languages and implementations such as:
 
-- Compilation takes time.
-- A different target platform may require recompilation.
-- Not every runtime or logic error can be detected at compile time.
+- C
+- C++
+- Rust
+- Go
 
-### Example
+These languages and their implementations may use different compilation strategies and toolchains.
 
-GCC is a widely used compiler collection for C and C++.
+**Remember:** A compiler translates code. It does not necessarily create a standalone executable in one step.
 
 ---
 
-## 3. Interpreter
+## 3. What Is an Interpreter?
 
 ### Definition
 
-An interpreter is a program that executes another program by
-processing its instructions or an intermediate representation
-during execution.
+An **Interpreter** is software that processes a program and performs its operations through an execution mechanism, rather than necessarily producing a separate native executable as the final result.
 
-### Example
+The exact process depends on the language and its implementation.
+
+### A Simple Example
 
 Consider this Python program:
 
-```python
-a = 10
-b = 20
-print(a + b)
+```python id="b2c0a3"
+name = "Junayed"
+print("Hello,", name)
 ```
 
-Output:
+When executed using a typical Python implementation, the program prints:
 
-```text
-30
+```text id="b2c0a4"
+Hello, Junayed
 ```
 
-An interpreter-based runtime processes the program and produces
-the required result.
+From the programmer's perspective, running a Python script may feel more direct than compiling a C program into a separate native executable.
 
-### CPython Example
+However, the internal process can be more complicated.
 
-CPython commonly compiles Python source code into bytecode and
-then executes that bytecode using its virtual machine.
+### How Does an Interpreter Work?
 
-```text
-Python Source Code
-        |
-        v
-Bytecode Compilation
-        |
-        v
-Python Virtual Machine
-        |
-        v
-Program Execution
+A simplified conceptual model is:
+
+```mermaid id="b2c0a5"
+flowchart TD
+    A["Program Source"] --> B["Interpreter or Runtime"]
+    B --> C["Process Program Operations"]
+    C --> D["Perform Operations"]
+    D --> E["Program Output"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style D fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style E fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
 
-This is a simplified description of CPython. Other Python
-implementations may work differently.
+This diagram describes the general idea, not every implementation detail.
 
-### Advantages
+### What Does an Interpreter Do?
 
-- Supports interactive execution in many environments.
-- Can make experimentation and debugging convenient.
-- May execute programs without producing a separate native
-  executable file.
+Depending on the implementation, an interpreter may:
 
-### Limitations
+- Read or process source code.
+- Analyze program structure.
+- Execute operations using a runtime.
+- Report errors encountered during processing or execution.
+- Work with bytecode or another intermediate representation.
 
-- Runtime interpretation can add overhead in some implementations.
-- An appropriate runtime may be required.
-- Some errors may appear only during execution.
+### When Is an Interpreter Used?
 
-These are general tendencies, not universal rules.
+Interpreters or interpreter-based runtimes are used with languages and environments such as:
+
+- Python
+- Ruby
+- JavaScript runtimes
+
+The implementation details differ. Some use bytecode, some use just-in-time compilation, and some combine several techniques.
+
+**Remember:** An interpreter is primarily associated with executing a program through an interpreter or runtime. It does not follow that every interpreter directly executes the original source text.
 
 ---
 
-## 4. Assembler
+## 4. What Is an Assembler?
 
 ### Definition
 
-An assembler is system software that translates assembly-language
-instructions into machine code or object code for a target
-processor architecture.
+An **Assembler** is system software that translates assembly-language instructions into machine code and commonly produces an object file.
+
+Assembly language uses symbolic instructions associated with a particular processor architecture.
 
 ### Example
 
-Illustrative Assembly Instruction:
+Consider this illustrative assembly-like instruction:
 
-```asm
+```asm id="b2c0a6"
 MOV R1, #10
 ```
 
-This instruction may mean placing the value 10 into register R1.
-Its exact syntax and meaning depend on the processor architecture.
+This instruction represents moving the value `10` into a register named `R1` in an assembly syntax that supports such an instruction.
 
-### Basic Process
+**Important:** This is an illustrative example. Exact instruction names, register names, and syntax depend on the target architecture and assembler.
 
-```text
-Assembly Source
-       |
-       v
-   Assembler
-       |
-       v
-Machine/Object Code
+The Assembler translates supported assembly instructions into their machine-code encodings.
+
+### Assembler Workflow
+
+```mermaid id="b2c0a7"
+flowchart TD
+    A["Assembly Source"] --> B["Assembler"]
+    B --> C["Machine-Code Instructions"]
+    C --> D["Object File"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style C fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style D fill:#DCFCE7,stroke:#16A34A,color:#14532D
 ```
 
-### Main Responsibilities
+### What Does an Assembler Do?
 
-- Translates assembly mnemonics into machine instructions.
+An Assembler commonly:
+
+- Translates assembly instructions into machine-code encodings.
 - Resolves labels and symbols where possible.
 - Produces object files.
-- May include relocation and symbol information in object files.
+- Records relocation and symbol information required by later build stages.
 
-### Example
+### When Is an Assembler Used?
 
-NASM is a widely used assembler.
+Assemblers are used when working with:
+
+- Low-level system programming.
+- Processor-specific assembly code.
+- Operating-system and embedded-system components.
+- Architecture and assembly-language coursework.
+
+**Remember:** The key distinction is the input. An Assembler processes assembly language, while a Compiler generally translates source code from a higher-level or otherwise supported language.
 
 ---
 
-## 5. Comparison: Compiler vs. Interpreter vs. Assembler
+## 5. Compare the Three Tools
+
+Now that we understand each tool individually, let's compare them directly.
 
 | Feature | Compiler | Interpreter | Assembler |
 |---|---|---|---|
-| Main purpose | Translate source programs | Execute a program or representation | Translate assembly instructions |
-| Typical input | High-level or other source language | Source or intermediate representation | Assembly language |
-| Typical output/result | Target code | Program execution result | Machine/object code |
-| Generates machine code | Often, directly or through a toolchain | Depends on implementation | Translates instructions into machine/object code |
-| Example | GCC | CPython runtime | NASM |
+| Main input | Source code | Source code or another supported representation | Assembly code |
+| Main purpose | Translate a program into a target representation | Execute program operations through an interpreter or runtime | Translate assembly instructions into machine code |
+| Typical result | Target code; sometimes part of a larger executable-building process | Program execution and output; may use bytecode or other intermediate forms | Object file containing machine code and supporting information |
+| Separate native executable required? | Depends on the toolchain and target | Not necessarily | Usually another build stage is needed for a complete executable |
+| Example | GCC or Clang used as a C compiler | CPython running Python code | NASM assembling supported x86 assembly code |
 
-The table presents the basic distinction. Modern language
-implementations may combine compilation and interpretation.
+The word **typical** matters. Real programming-language implementations can combine compilation and interpretation techniques.
+
+### Visual Comparison
+
+```mermaid id="b2c0a8"
+flowchart TD
+    A["Compiler"] --> A1["Source Code"]
+    A --> A2["Target Representation"]
+
+    B["Interpreter"] --> B1["Source or Intermediate Form"]
+    B --> B2["Execution Through a Runtime"]
+
+    C["Assembler"] --> C1["Assembly Code"]
+    C --> C2["Machine Code / Object File"]
+
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style C fill:#DCFCE7,stroke:#16A34A,color:#14532D
+```
+
+### The Easiest Way to Remember
+
+- **Compiler:** Translates source code into a target representation.
+- **Interpreter:** Processes and executes a program through a runtime or interpretation mechanism.
+- **Assembler:** Converts assembly instructions into machine code.
+
+If you remember their main inputs and purposes, many exam questions become easier.
 
 ---
 
 ## 6. A Real-Life Analogy
 
-Imagine three different technical jobs:
+Imagine three people doing three different jobs.
 
-- A translator converts a document from one language into another.
-- An executor reads instructions and carries them out step by step.
-- A technical specialist converts symbolic machine instructions
-  into the encoding required by a processor.
+### The Compiler: A Translator Preparing a Complete Document
 
-These roles help illustrate the differences between Compiler,
-Interpreter, and Assembler.
+A translator receives a document and prepares a translated version in another language.
 
-| Analogy | Compiler Concept |
-|---|---|
-| Original document | Source Program |
-| Translation process | Compilation |
-| Translated document | Target Program |
-| Execution of instructions | Interpretation/Execution |
-| Machine-instruction specialist | Assembler |
+This resembles a compiler translating source code into a target representation.
 
-This is an analogy for learning. Real software tools follow
-formal language rules and architecture-specific requirements.
+### The Interpreter: Someone Explaining Instructions While Carrying Them Out
+
+Imagine a person who reads a set of instructions and carries out the requested actions through an ongoing process.
+
+This resembles the broad idea of an interpreter executing a program.
+
+The analogy is not exact, because real interpreters and runtimes may process source code, bytecode, or other representations.
+
+### The Assembler: Someone Following a Technical Instruction Sheet
+
+Imagine a technical instruction sheet that uses symbolic commands for a particular machine. The assembler converts those symbolic commands into the machine's encoded instructions.
+
+This is similar to an Assembler translating assembly-language instructions into machine code.
+
+### What Should You Take Away?
+
+The three tools are related to programming-language processing, but they accept different kinds of input and perform different jobs.
+
+Do not memorize only the analogies. Always connect each tool to its actual role.
 
 ---
 
-## 7. The Relationship Between Compiler and Assembler
+## 7. How a C Program Is Built
 
-A typical C build process may involve several tools.
+Let's connect the three tools to a real build process.
 
-```text
-main.c
-   |
-   v
-Preprocessor
-   |
-   v
-Compiler
-   |
-   v
-Assembly File
-   |
-   v
-Assembler
-   |
-   v
-Object File
-   |
-   v
-Linker
-   |
-   v
-Executable
+Suppose you have a file named `main.c`.
+
+```c id="b2c0a9"
+#include <stdio.h>
+
+int main(void)
+{
+    printf("Hello, World!\n");
+    return 0;
+}
 ```
 
-This is one possible toolchain. A compiler may generate object
-code directly, so a separate assembly file may not be visible.
+A typical native-code build process may look like this:
 
-### Object File
+```mermaid id="b2c0b0"
+flowchart TD
+    A["main.c"] --> B["Preprocessor"]
+    B --> C["Preprocessed Source"]
+    C --> D["Compiler"]
+    D --> E["Assembly File<br/>(Possible Intermediate Output)"]
+    E --> F["Assembler"]
+    F --> G["Object File"]
+    G --> H["Linker"]
+    I["Required Libraries and Other Objects"] --> H
+    H --> J["Executable"]
+    J --> K["Operating System Loads Program"]
+    K --> L["Program Runs"]
 
-An object file commonly contains relocatable machine code,
-symbol information, and relocation information.
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style D fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D
+    style F fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style H fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style J fill:#DCFCE7,stroke:#16A34A,color:#14532D
+    style L fill:#DCFCE7,stroke:#16A34A,color:#14532D
+```
 
-Examples:
+### Step 1: Preprocessing
 
-- `main.o`
-- `main.obj`
+The Preprocessor handles directives such as `#include` and `#define`.
 
-### Linker
+### Step 2: Compilation
 
-A linker combines object files and required libraries or other
-components to produce an executable or another linked output.
+The Compiler analyzes the preprocessed source and generates target code. A separate assembly file may be produced.
 
-### Executable
+### Step 3: Assembly
 
-An executable is a program file prepared for execution under
-the rules of a target operating system and platform.
+If the build process produces assembly code as a separate file, the Assembler translates it into an object file.
+
+### Step 4: Linking
+
+The Linker combines the object file with other required objects and library components, resolving external references.
+
+### Step 5: Loading and Execution
+
+The operating system prepares the executable for execution, and the program runs.
+
+### Important Detail
+
+You may run a single command such as:
+
+```bash
+gcc main.c -o program
+```
+
+This does not mean that the Compiler alone performs every task. The compiler driver can invoke the necessary tools for the build.
+
+Also, the toolchain may skip the creation of a separate assembly file or use a different internal route.
 
 ---
 
-## 8. When Are These Tools Used?
+## 8. Does an Interpreter Always Run Source Code Directly?
 
-### Compiler
+No. This is one of the most important details to understand.
 
-Used when source programs need to be translated into target code.
+A common beginner explanation says:
 
-Example: Compiling a C program with GCC.
+- A compiler translates the whole program first.
+- An interpreter executes the source code directly, one line at a time.
 
-### Interpreter
+This is a useful starting point, but it is too simple to describe every modern implementation accurately.
 
-Used to execute programs or intermediate representations at
-runtime.
+### Example: CPython
 
-Example: Running a Python script with CPython.
+CPython, the standard and most widely used implementation of Python, typically compiles Python source into bytecode and executes that bytecode using its virtual machine.
 
-### Assembler
+A simplified view is:
 
-Used to translate architecture-specific assembly instructions.
+```mermaid id="b2c0b1"
+flowchart TD
+    A["Python Source Code"] --> B["Compile to Bytecode"]
+    B --> C["Python Virtual Machine"]
+    C --> D["Program Execution"]
 
-Example: Assembling an x86 assembly program with NASM.
+    style A fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
+    style B fill:#FEF3C7,stroke:#D97706,color:#78350F
+    style C fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style D fill:#DCFCE7,stroke:#16A34A,color:#14532D
+```
+
+This is a simplified conceptual model. Actual behavior can include caching, implementation-specific optimizations, and other runtime details.
+
+### What Is Bytecode?
+
+**Bytecode** is an intermediate representation designed for execution by a virtual machine or another runtime mechanism.
+
+It is not the same thing as the native machine code executed directly by a physical CPU.
+
+### What About JavaScript?
+
+JavaScript engines may interpret code, compile it into machine code using just-in-time compilation, or combine multiple techniques.
+
+This is why it is better to understand the execution model of a particular implementation instead of assuming that every interpreter works in exactly the same way.
+
+### Exam-Friendly Answer
+
+An interpreter executes a program through an interpretation or runtime mechanism. It does not necessarily execute the original source text directly; some implementations first compile source code into an intermediate form such as bytecode.
 
 ---
 
 ## 9. Common Misconceptions
 
-### Misconception 1
+### Misconception 1: Every Compiler Produces a Separate Assembly File
 
-Every compiler generates machine code directly.
+**Correction:** A compiler may produce assembly code, object code, or another target representation. Some toolchains do not generate a separate assembly file.
 
-**Correction:** A compiler may generate assembly code, object
-code, machine code, or an intermediate representation.
+### Misconception 2: An Interpreter Never Compiles Anything
 
-### Misconception 2
+**Correction:** Some interpreter-based implementations compile source code into bytecode or use just-in-time compilation.
 
-An interpreter never uses compilation.
+### Misconception 3: An Assembler Is the Same as a Compiler
 
-**Correction:** CPython commonly uses bytecode compilation
-followed by bytecode execution.
+**Correction:** An Assembler specifically translates assembly-language instructions into machine code. A Compiler generally translates a source language into another representation.
 
-### Misconception 3
+### Misconception 4: A Compiler Always Produces a Complete Executable
 
-A compiler can detect every programming error.
+**Correction:** A compiler may produce only target code or an object file. Linking may still be required.
 
-**Correction:** Compilers detect many compile-time errors,
-but runtime and logic errors may remain.
+### Misconception 5: One Tool Must Perform Only One Internal Activity
 
-### Misconception 4
-
-Compiler and Assembler perform exactly the same task.
-
-**Correction:** Their input languages and translation
-responsibilities are different.
-
-### Misconception 5
-
-Every compiler must create a separate assembly file.
-
-**Correction:** Some toolchains generate object code directly.
+**Correction:** Modern toolchains and runtimes can combine several techniques. The names describe their main roles, not necessarily every internal operation.
 
 ---
 
 ## 10. Quick Revision
 
-- A Compiler translates source programs into target programs.
-- An Interpreter processes and executes a program or representation.
-- An Assembler translates assembly instructions into machine/object code.
-- Compilation and interpretation can coexist in one implementation.
-- Object files are commonly used as inputs to a linker.
-- A linker combines object files and required components.
-- A separate assembly file is not required in every compiler workflow.
+### Three Definitions to Remember
+
+**Compiler:** Software that translates source code into a target representation.
+
+**Interpreter:** Software that processes and executes a program through an interpretation or runtime mechanism.
+
+**Assembler:** Software that translates assembly-language instructions into machine code.
+
+### One-Minute Revision Table
+
+| Question | Answer |
+|---|---|
+| Which tool translates source code? | Compiler |
+| Which tool executes a program through a runtime or interpretation mechanism? | Interpreter |
+| Which tool translates assembly instructions? | Assembler |
+| What is bytecode? | An intermediate representation used by a runtime or virtual machine |
+| What does the Linker do? | Combines program components and resolves external references |
+| Must every compiler produce a separate assembly file? | No |
+
+### Memory Trick
+
+**Compiler = Translate**  
+**Interpreter = Execute through a runtime**  
+**Assembler = Assembly to machine code**
+
+These are simplified memory aids. Real implementations may combine compilation and interpretation techniques.
 
 ---
 
 ## 11. Practice Questions
 
+Try answering these questions before checking your notes.
+
 ### Short Questions
 
-1. Define a Compiler.
+1. What is the main difference between a Compiler and an Assembler?
 2. Define an Interpreter.
-3. Define an Assembler.
-4. What is the purpose of a Linker?
-5. What is an Object File?
-6. Name one example of each tool.
+3. What is the main purpose of an Assembler?
+4. What is bytecode?
+5. What is the role of a Linker in a typical C build process?
 
-### Descriptive Questions
+### Conceptual Questions
 
-1. Differentiate between Compiler, Interpreter, and Assembler.
-2. Explain a typical C program build process with a diagram.
-3. Explain the role of CPython bytecode compilation.
-4. Describe the relationship between Compiler, Assembler, and Linker.
-5. Discuss common misconceptions about compilation and interpretation.
+6. Does an Interpreter always execute source code directly without compilation? Explain with an example.
+7. Why might a Compiler produce an object file instead of a complete executable?
+8. Why is it inaccurate to say that every Compiler must generate a separate assembly file?
+9. Explain the typical process from `main.c` to a running C program.
 
 ### True or False
 
-1. Every interpreter directly executes the original source text.
-2. An assembler translates assembly-language instructions.
-3. Every compiler must generate a separate assembly file.
-4. A linker can combine object files and required libraries.
-5. Compilation and interpretation may both be used by one language implementation.
+10. Every Compiler must generate a separate Assembly file.
+11. An Assembler translates assembly-language instructions into machine code.
+12. CPython typically uses bytecode as part of its execution process.
+13. Compilation and linking always refer to the same operation.
+
+For each false statement, rewrite it correctly.
 
 ---
 
 ## 12. Self-Assessment Checklist
 
-- [ ] I can define a Compiler.
-- [ ] I can define an Interpreter.
-- [ ] I can define an Assembler.
-- [ ] I can explain their main differences.
-- [ ] I can describe a typical C build process.
-- [ ] I understand Object Files and Linkers.
-- [ ] I understand why compilation and interpretation can coexist.
+Before moving to the next lesson, make sure you can:
+
+- [ ] Define a Compiler, Interpreter, and Assembler.
+- [ ] Identify the main input of each tool.
+- [ ] Explain their major differences without relying only on memorized wording.
+- [ ] Describe the typical build process of a C program.
+- [ ] Explain the basic role of the Linker and Loader.
+- [ ] Understand that an interpreter-based implementation may use bytecode.
+- [ ] Explain why real toolchains can combine or omit separate steps.
 
 ---
 
 ## Conclusion
 
-Compiler, Interpreter, and Assembler have different but related
-responsibilities in program translation and execution.
+Compiler, Interpreter, and Assembler are related but distinct concepts.
 
-Understanding these tools provides a foundation for studying
-the internal phases of a compiler.
+A Compiler translates source code into a target representation. An Interpreter processes and executes a program through an interpretation or runtime mechanism. An Assembler translates assembly-language instructions into machine code.
 
-In the next lesson, we will study the Language Processing System,
-including the Preprocessor, Compiler, Assembler, Linker, and Loader.
+Understanding these differences will help you follow the next lessons, where we will study how source code is processed before the compiler's internal phases begin.
+
+**Next Lesson:** Lesson 03 — Language Processing System
