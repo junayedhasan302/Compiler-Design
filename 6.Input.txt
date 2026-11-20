@@ -1,0 +1,11 @@
+#include <iostream>
+using namespace std;
+// Calculate the sum of two numbers
+int main() {
+    int a = 10, b = 20;
+    /* Store the result
+       and display the output */
+    cout << a + b;
+    // End of program
+    return 0;
+}

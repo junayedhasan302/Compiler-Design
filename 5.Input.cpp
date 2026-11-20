@@ -1,10 +1,10 @@
+
 // JUNAYED HASAN
 #include <bits/stdc++.h>
 using namespace std;
 
 int main() {
-    ifstream file("input.txt");
-
+    ifstream file("5.Input.txt");
     if (!file.is_open()) {
         cout << "Cannot open input.txt" << endl;
         return 1;
@@ -17,23 +17,19 @@ int main() {
     }
 
     string line;
-    int singleLine = 0;
-    int multiLine = 0;
+    int singleLine = 0, multiLine = 0;
     bool insideMulti = false;
 
     while (getline(file, line)) {
         int i = 0;
-
         while (i < line.length()) {
-            // Skip content inside an existing multi-line comment
+            // Skip existing multi-line comment
             if (insideMulti) {
                 if (i + 1 < line.length() &&
                     line[i] == '*' && line[i + 1] == '/') {
                     insideMulti = false;
                     i += 2;
-                } else {
-                    i++;
-                }
+                } else i++;
             }
             // Detect single-line comments
             else if (i + 1 < line.length() &&
@@ -43,19 +39,16 @@ int main() {
             }
             // Detect multi-line comment openings
             else if (i + 1 < line.length() &&
-                line[i] == '/' && line[i + 1] == '*') {
+                     line[i] == '/' && line[i + 1] == '*') {
                 multiLine++;
                 insideMulti = true;
                 i += 2;
             }
-            else {
-                i++;
-            }
+            else i++;
         }
     }
 
     file.close();
-
     cout << "Single-line comments: " << singleLine << endl;
     cout << "Multi-line comment openings: " << multiLine << endl;
 
